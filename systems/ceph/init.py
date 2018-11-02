@@ -6,23 +6,24 @@ import sys
 
 
 # try:
-#         cluster = rados.Rados(conffile='')
+#         # cluster = rados.Rados(conffile = '/etc/ceph/ceph.conf', conf = dict (keyring = '/etc/ceph/ceph.client.admin.keyring'))
+#         cluster = rados.Rados(conf = dict (keyring = '/etc/ceph/ceph.client.admin.keyring'))
+# 	print "Created cluster handle."
 # except TypeError as e:
 #         print 'Argument validation error: ', e
 #         raise e
 
-# print "Created cluster handle."
-
 # try:
 #         cluster.connect()
+# 	print "Connected to the cluster."
 # except Exception as e:
-#         print "connection error: ", e
+#         print "Connection error: ", e
 #         raise e
-# finally:
-#         print "Connected to the cluster."
 
 
-cluster = rados.Rados(conffile='ceph.conf')
+##################################################
+# cluster = rados.Rados()
+cluster = rados.Rados(conf = dict (keyring = '/etc/ceph/ceph.client.admin.keyring'))
 print "\nlibrados version: " + str(cluster.version())
 print "Will attempt to connect to: " + str(cluster.conf_get('mon initial members'))
 
