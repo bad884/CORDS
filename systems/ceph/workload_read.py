@@ -1,6 +1,7 @@
 #!/usr/bin/env  python
 import sys
 import os
+import rados
 
 CURR_DIR = os.path.dirname(os.path.realpath(__file__))
 if sys.argv[1] == 'trace':
@@ -14,18 +15,37 @@ elif sys.argv[1] == 'cords':
 workload_dir = sys.argv[2]
 file = open(workload_dir + '/foo', 'r')
 status = ''
+POOL_NAME = "test"
+
 try:
-	read_data = (file.read())
-	file.close()
-	if read_data == 'test\n':
-		status = 'Correct'
-		print status
-	else:
-		status = 'Corrupt'
-		print status
+        cluster = rados.Rados(conffile = '/etc/ceph/ceph.conf')
+        # cluster = rados.Rados(conffile = '/home/ceph-admin/CORDS/systems/ceph/confs/bradley/ceph.conf', conf = dict (keyring = '/etc/ceph/ceph.client.admin.keyring'))
+	print "Created cluster handle."
+except TypeError as e:
+        print 'Argument validation error: ', e
+        raise e
+
+print "Will attempt to connect to: " + str(cluster.conf_get('mon initial members'))
+try:
+        cluster.connect()
+	print "Connected to the cluster."
 except Exception as e:
-	print 'Error:' + str(e)
-	status = 'Error'
+        print "Connection error: ", e
+        raise e
+
+ioctx = cluster.open_ioctx(POOL_NAME)
+read_data = ioctx.read("hw")
+print(read_data)
+
+if read_data == "Hello World!":
+	status = 'Correct'
+else:
+	status = 'Corrupt'
+
+print status
+
+ioctx.close()
+
 if sys.argv[1] == 'cords':
 	result_dir = sys.argv[-1]
 	# you can copy any files you need into this result_dir like application logs etc., or log additional data
