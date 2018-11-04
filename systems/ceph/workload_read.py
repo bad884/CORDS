@@ -3,6 +3,12 @@ import sys
 import os
 import rados
 
+POOL_NAME = "test"
+START_CMD = "sudo systemctl start ceph-osd.target"
+STOP_CMD = "sudo systemctl stop ceph-osd.target"
+
+os.system(START_CMD)
+
 CURR_DIR = os.path.dirname(os.path.realpath(__file__))
 if sys.argv[1] == 'trace':
 	print 'we are in trace mode now'
@@ -45,6 +51,8 @@ else:
 print status
 
 ioctx.close()
+
+os.system(STOP_CMD)
 
 if sys.argv[1] == 'cords':
 	result_dir = sys.argv[-1]
