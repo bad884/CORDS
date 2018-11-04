@@ -28,7 +28,7 @@ import subprocess
 import argparse
 
 ERRFS_HOME = os.path.dirname(os.path.realpath(__file__))
-fuse_command_trace = ERRFS_HOME + "/errfs -f -omodules=subdir,subdir=%s %s trace %s &"
+fuse_command_trace = ERRFS_HOME + "/errfs -f -omodules=subdir,nonempty,allow_other,subdir=%s %s trace %s &"
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--trace_files', nargs='+', required = True, help = 'Trace file paths')
@@ -64,15 +64,16 @@ for i in range(0, machine_count):
 	data_dir_snapshots.append(os.path.join(uppath(data_dirs[i], 1), os.path.basename(os.path.normpath(data_dirs[i]))+ ".snapshot"))
 	data_dir_mount_points.append(os.path.join(uppath(data_dirs[i], 1), os.path.basename(os.path.normpath(data_dirs[i]))+ ".mp"))
 	subprocess.check_output("rm -rf " + data_dir_snapshots[i], shell = True)
-	subprocess.check_output("rm -rf " + data_dir_mount_points[i], shell = True)
-	subprocess.check_output("mkdir " + data_dir_mount_points[i], shell = True)
+#	subprocess.check_output("rm -rf " + data_dir_mount_points[i], shell = True)
+#	subprocess.check_output("mkdir " + data_dir_mount_points[i], shell = True)
 
 for i in range(0, machine_count):
 	subprocess.check_output("cp -R " + data_dirs[i] + " " + data_dir_snapshots[i], shell = True)
 
 for i in range(0, machine_count):
 	subprocess.check_output("rm -rf " + trace_files[i], shell = True)
-
+	subprocess.check_output("touch " + trace_files[i], shell = True)
+	subprocess.check_output("chmod 0777 " + trace_files[i], shell = True)
 
 for i in range(0, machine_count):
 	print fuse_command_trace%(data_dirs[i], data_dir_mount_points[i], trace_files[i])

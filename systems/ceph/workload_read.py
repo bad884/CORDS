@@ -12,14 +12,11 @@ os.system(START_CMD)
 CURR_DIR = os.path.dirname(os.path.realpath(__file__))
 if sys.argv[1] == 'trace':
 	print 'we are in trace mode now'
-	assert(len(sys.argv) == 3)
 	# format of sys.argv is sample_read.py trace workload_dir
 elif sys.argv[1] == 'cords':
 	print 'we are in cords mode now, injecting faults'
 	assert(len(sys.argv) == 4)
 	# format of sys.argv is sample_read.py cords workload_dir result_dir
-workload_dir = sys.argv[2]
-file = open(workload_dir + '/foo', 'r')
 status = ''
 POOL_NAME = "test"
 
