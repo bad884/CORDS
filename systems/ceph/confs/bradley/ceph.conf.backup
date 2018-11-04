@@ -1,8 +1,8 @@
 [global]
-fsid = 9be0af35-41e3-4e64-8c1d-2a984d74706e
+fsid = c82cecb8-6cde-4a92-acc4-a133b34551fb
 mon_initial_members = ceph
 mon_host = 10.128.0.3
 auth_cluster_required = cephx
 auth_service_required = cephx
 auth_client_required = cephx
-osd crush chooseleaf type = 0
+
