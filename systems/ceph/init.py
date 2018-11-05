@@ -52,7 +52,14 @@ print "=================="
 print "WRITING DATA"
 print "=================="
 ioctx = cluster.open_ioctx(POOL_NAME)
-ioctx.write_full("hw", "Hello World!")
+
+with open('/home/ceph-admin/CORDS/systems/ceph/testfile_8ka','r') as f:
+        testfile_8ka = f.read()
+        ioctx.write_full("testfile_8ka", testfile_8ka)
+
 ioctx.close()
+print "=================="
+print "IOCTX CLOSED"
+print "=================="
 
 os.system(STOP_CMD)
