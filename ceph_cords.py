@@ -168,9 +168,11 @@ def cords_check():
 				log_dir_path =  os.path.join(cords_results_base_dir, log_dir)
 
 				print str(op) + ' ' + str(corrupt_machine) + ':' + str(corrupt_filename) + ':' + str(block) + ':' + str(err_type)
-				for mach in machines:
-					subprocess.check_output("rm -rf " + data_dirs[mach], shell = True)
-					subprocess.check_output("cp -R " + data_dir_snapshots[mach] + ' ' + data_dirs[mach], shell = True)
+				# for mach in machines:
+					# subprocess.check_output("rm -rf " + data_dirs[mach], shell = True)
+					# subprocess.check_output("cp -R " + data_dir_snapshots[mach] + ' ' + data_dirs[mach], shell = True)
+
+				os.system("sudo /home/ceph-admin/CORDS/scripts/snapshotting/revert.sh")
 
 				subprocess.check_output("rm -rf " + data_dir_mount_points[corrupt_machine], shell = True)
 				subprocess.check_output("mkdir " + data_dir_mount_points[corrupt_machine], shell = True)
@@ -230,6 +232,6 @@ end_test = time.time()
 print 'Testing took ' + str((end_test - start_test)) + ' seconds...'
 
 # Revert back to old conf
-print("Revert back to old state")
+print("/nRevert back to old state")
 os.system("sudo /home/ceph-admin/CORDS/scripts/snapshotting/revert.sh")
 os.system("sudo cp /home/ceph-admin/CORDS/scripts/setup/ceph.backup /etc/ceph/ceph.conf")
