@@ -1,3 +1,5 @@
+#!/bin/bash
+
 sudo -u ceph cp -r /var/lib/ceph/osd/ceph-0 /var/lib/ceph/osd/ceph-0.snapshot
 sudo -u ceph cp -r /var/lib/ceph/osd/ceph-1 /var/lib/ceph/osd/ceph-1.snapshot
 sudo -u ceph cp -r /var/lib/ceph/osd/ceph-2 /var/lib/ceph/osd/ceph-2.snapshot
