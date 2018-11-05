@@ -69,7 +69,8 @@ for i in range(0, machine_count):
 	subprocess.check_output("rm -rf " + data_dir_mount_points[i], shell = True)
 #	subprocess.check_output("mkdir " + data_dir_mount_points[i], shell = True)
 
-os.system("sudo ./scripts/snapshotting/snapshot.sh")
+#os.system("sudo ./scripts/snapshotting/copy_journals.sh")
+#os.system("sudo ./scripts/snapshotting/snapshot.sh")
 os.system("sudo ./scripts/snapshotting/copy_data.sh")
 # Remove old trace files and create new ones
 for i in range(0, machine_count):
@@ -131,4 +132,5 @@ for trace_file in trace_files:
 		with open(trace_file, 'w') as f:
 			f.write(to_write_final)
 
+os.system("sudo cp /home/ceph-admin/CORDS/scripts/setup/ceph.backup /etc/ceph/ceph.conf")
 print 'Tracing completed...'
