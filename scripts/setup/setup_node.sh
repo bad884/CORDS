@@ -20,4 +20,6 @@ make
 cd ~
 
 cp CORDS/scripts/setup/fuse.conf /etc/fuse.conf
- 
+
+mkdir trace
+chmod 777 -R trace/

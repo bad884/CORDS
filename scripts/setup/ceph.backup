@@ -1,7 +1,7 @@
 [global]
-fsid = a98b5740-17c7-4a8e-aeb9-407b341d2f61
+fsid = 1ee4f70c-7d62-414a-a07a-3a61a1b6932c
 mon_initial_members = ceph
-mon_host = 10.128.0.2
+mon_host = 10.128.0.3
 auth_cluster_required = cephx
 auth_service_required = cephx
 auth_client_required = cephx

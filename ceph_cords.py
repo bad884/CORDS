@@ -1,17 +1,17 @@
 #! /usr/bin/env python
 # Copyright (c) 2016 Aishwarya Ganesan and Ramnatthan Alagappan.
 # All Rights Reserved.
-# 
+#
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
 # in the Software without restriction, including without limitation the rights
 # to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 # copies of the Software, and to permit persons to whom the Software is
 # furnished to do so, subject to the following conditions:
-# 
+#
 # The above copyright notice and this permission notice shall be included in
 # all copies or substantial portions of the Software.
-# 
+#
 # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 # IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 # FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -64,7 +64,7 @@ def get_block_nrs(offset, size):
 	start_offset = offset
 	end_offset = start_offset + size
 	total_blocks_touched = int((block_roundup(end_offset) - block_rounddown(start_offset)) / BLOCKSIZE)
-	
+
 	assert total_blocks_touched >= 1
 	start_block_nr = int(math.floor(start_offset / BLOCKSIZE))
 	return range(start_block_nr, start_block_nr + total_blocks_touched)
@@ -98,7 +98,7 @@ if checker_command is not None and len(checker_command) > 0:
 
 err_map = defaultdict(set)
 machines = []
-machine = 0 
+machine = 0
 for trace_file in trace_files:
 	machines.append(machine)
 	assert os.path.exists(trace_file)
@@ -127,9 +127,9 @@ assert len(machines) > 0
 def get_error_modes(op):
 	if op == 'r':
 		return ["eio", "cz", "cg"]
-	elif op == 'w': 
+	elif op == 'w':
 		return ["eio"]
-	elif op == 'a': 
+	elif op == 'a':
 		return ["eio", "esp"]
 	else:
 		assert False
@@ -140,16 +140,16 @@ def cords_count():
 		corrupt_machine = key[0]
 		other_machines = [i for i in machines if i != corrupt_machine]
 		assert len([corrupt_machine] + other_machines) == len(machines)
-		corrupt_filename = key[1] 
+		corrupt_filename = key[1]
 		block_ops = list(err_map[key])
-		
+
 		for (op, block) in block_ops:
 			possible_err_modes = get_error_modes(op)
 			for err_type in possible_err_modes:
 				total += 1
 
 	return total
-				
+
 def cords_check():
 	total = cords_count()
 	count = 0
@@ -157,23 +157,23 @@ def cords_check():
 		corrupt_machine = key[0]
 		other_machines = [i for i in machines if i != corrupt_machine]
 		assert len([corrupt_machine] + other_machines) == len(machines)
-		corrupt_filename = key[1] 
+		corrupt_filename = key[1]
 		block_ops = list(err_map[key])
-		
+
 		for (op, block) in block_ops:
 			possible_err_modes = get_error_modes(op)
 			for err_type in possible_err_modes:
-				dir_index = str(corrupt_filename).rfind(data_dirs[corrupt_machine]) + len(data_dirs[corrupt_machine]) + 1			
+				dir_index = str(corrupt_filename).rfind(data_dirs[corrupt_machine]) + len(data_dirs[corrupt_machine]) + 1
 				log_dir =  'result_' + (str(corrupt_machine) + '_' + str(corrupt_filename[dir_index :]) + '_' + str(block) + '_' + str(op) + '_' + str(err_type)).replace('/', '_')
 				log_dir_path =  os.path.join(cords_results_base_dir, log_dir)
-				
+
 				print str(op) + ' ' + str(corrupt_machine) + ':' + str(corrupt_filename) + ':' + str(block) + ':' + str(err_type)
 				for mach in machines:
 					subprocess.check_output("rm -rf " + data_dirs[mach], shell = True)
 					subprocess.check_output("cp -R " + data_dir_snapshots[mach] + ' ' + data_dirs[mach], shell = True)
 
-				subprocess.check_output("rm -rf " + data_dir_mount_points[corrupt_machine], shell = True)	
-				subprocess.check_output("mkdir " + data_dir_mount_points[corrupt_machine], shell = True)	
+				subprocess.check_output("rm -rf " + data_dir_mount_points[corrupt_machine], shell = True)
+				subprocess.check_output("mkdir " + data_dir_mount_points[corrupt_machine], shell = True)
 
 				fuse_start_command = fuse_command_err%(data_dirs[corrupt_machine], data_dir_mount_points[corrupt_machine], corrupt_filename, block, err_type)
 				os.system(fuse_start_command)
@@ -182,7 +182,7 @@ def cords_check():
 				data_dir_curr = []
 				for mach in machines:
 					data_dir_curr.append(data_dir_mount_points[mach] if corrupt_machine == mach else data_dirs[mach])
-				assert len(data_dir_curr) == len(machines)				
+				assert len(data_dir_curr) == len(machines)
 
 				workload_command_curr = workload_command + " cords "
 				for ddc in data_dir_curr:
@@ -192,7 +192,7 @@ def cords_check():
 
 				os.system("rm -rf " + log_dir_path)
 				os.system("mkdir -p " + log_dir_path)
-				
+
 				os.system("rm -rf /tmp/shoulderr")
 				os.system("touch /tmp/shoulderr; echo \'fals\' >> /tmp/shoulderr")
 
@@ -202,8 +202,8 @@ def cords_check():
 				os.system("touch " + outfile)
 				with open(outfile, 'a') as f:
 					f.write(out + '\n' + err + '\n')
-					
-				fuse_unmount = fuse_unmount_command%(data_dir_mount_points[corrupt_machine]) 
+
+				fuse_unmount = fuse_unmount_command%(data_dir_mount_points[corrupt_machine])
 				os.system(fuse_unmount)
 				os.system('sleep 1')
 				os.system('killall errfs')
@@ -228,3 +228,8 @@ cords_check()
 print 'cords-check done!'
 end_test = time.time()
 print 'Testing took ' + str((end_test - start_test)) + ' seconds...'
+
+# Revert back to old conf
+print("Revert back to old state")
+os.system("sudo /home/ceph-admin/CORDS/scripts/snapshotting/revert.sh")
+os.system("sudo cp /home/ceph-admin/CORDS/scripts/setup/ceph.backup /etc/ceph/ceph.conf")

@@ -40,8 +40,8 @@ try:
 except Exception as e:
         print "Connection error: ", e
         raise e
-os.system("sleep 5")
-os.system("sudo cat /etc/ceph/ceph.conf")
+
+os.system("sleep 1")
 os.system("sudo ceph osd tree")
 os.system("sudo ceph -s")
 

@@ -23,3 +23,4 @@ ln -sf /dev/disk/by-partuuid/$fs_uuid /var/lib/ceph/osd/ceph-1.snapshot/journal
 fs_uuid=$(sudo blkid -o value -s PARTUUID /dev/sdg1)
 echo $fs_uuid > /var/lib/ceph/osd/ceph-2.snapshot/journal_uuid
 ln -sf /dev/disk/by-partuuid/$fs_uuid /var/lib/ceph/osd/ceph-2.snapshot/journal
+
