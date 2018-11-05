@@ -41,7 +41,7 @@ except Exception as e:
         print "Connection error: ", e
         raise e
 
-os.system("sleep 1")
+os.system("sleep 3")
 os.system("sudo ceph osd tree")
 os.system("sudo ceph -s")
 
