@@ -1,17 +1,17 @@
 #! /usr/bin/env python
-# Copyright (c) 2016 Aishwarya Ganesan and Ramnatthan Alagappan. 
+# Copyright (c) 2016 Aishwarya Ganesan and Ramnatthan Alagappan.
 # All Rights Reserved.
-# 
+#
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
 # in the Software without restriction, including without limitation the rights
 # to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 # copies of the Software, and to permit persons to whom the Software is
 # furnished to do so, subject to the following conditions:
-# 
+#
 # The above copyright notice and this permission notice shall be included in
 # all copies or substantial portions of the Software.
-# 
+#
 # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 # IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 # FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -28,7 +28,7 @@ import subprocess
 import argparse
 
 ERRFS_HOME = os.path.dirname(os.path.realpath(__file__))
-fuse_command_trace = ERRFS_HOME + "/errfs -f -omodules=subdir,nonempty,allow_other,subdir=%s %s trace %s &"
+fuse_command_trace = ERRFS_HOME + "/errfs -f -ononempty,modules=subdir,allow_other,subdir=%s %s trace %s &"
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--trace_files', nargs='+', required = True, help = 'Trace file paths')
@@ -37,21 +37,22 @@ parser.add_argument('--workload_command', required = True, type = str)
 parser.add_argument('--ignore_file', type = str, default = None)
 
 args = parser.parse_args()
+
+# Convert trace file and data dir relative to absolute paths
 for i in range(0, len(args.trace_files)):
 	args.trace_files[i] = os.path.abspath(args.trace_files[i])
-
 for i in range(0, len(args.data_dirs)):
 	args.data_dirs[i] = os.path.abspath(args.data_dirs[i])
 
 trace_files = args.trace_files
 data_dirs = args.data_dirs
+workload_command = args.workload_command
 ignore_file = args.ignore_file
 
 assert len(trace_files) == len(data_dirs)
 machine_count = len(trace_files)
 
-workload_command = args.workload_command
-
+# Check data dirs exist
 for data_dir in data_dirs:
 	assert os.path.exists(data_dir)
 
@@ -60,6 +61,7 @@ uppath = lambda _path, n: os.sep.join(_path.split(os.sep)[:-n])
 data_dir_snapshots = []
 data_dir_mount_points = []
 
+# Snapshot data dirs
 for i in range(0, machine_count):
 	data_dir_snapshots.append(os.path.join(uppath(data_dirs[i], 1), os.path.basename(os.path.normpath(data_dirs[i]))+ ".snapshot"))
 	data_dir_mount_points.append(os.path.join(uppath(data_dirs[i], 1), os.path.basename(os.path.normpath(data_dirs[i]))+ ".mp"))
@@ -70,18 +72,20 @@ for i in range(0, machine_count):
 for i in range(0, machine_count):
 	subprocess.check_output("cp -R " + data_dirs[i] + " " + data_dir_snapshots[i], shell = True)
 
+# Remove old trace files and create new ones
 for i in range(0, machine_count):
 	subprocess.check_output("rm -rf " + trace_files[i], shell = True)
 	subprocess.check_output("touch " + trace_files[i], shell = True)
 	subprocess.check_output("chmod 0777 " + trace_files[i], shell = True)
 
+# Mount errfs
 for i in range(0, machine_count):
 	print fuse_command_trace%(data_dirs[i], data_dir_mount_points[i], trace_files[i])
 	os.system(fuse_command_trace%(data_dirs[i], data_dir_mount_points[i], trace_files[i]))
 
 os.system('sleep 1')
 
-workload_command +=  " trace " 
+workload_command +=  " trace "
 for i in range(0, machine_count):
 	workload_command += data_dir_mount_points[i] + " "
 os.system(workload_command)
@@ -92,7 +96,7 @@ for mp in data_dir_mount_points:
 os.system('killall errfs >/dev/null 2>&1')
 
 to_ignore_files = []
-if ignore_file is not None:	
+if ignore_file is not None:
 	with open(ignore_file, 'r') as f:
 		for line in f:
 			line = line.strip().replace('\n','')
