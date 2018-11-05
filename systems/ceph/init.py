@@ -47,15 +47,23 @@ print "=================="
 print "CREATING POOL " + POOL_NAME
 print "=================="
 cluster.create_pool(POOL_NAME)
+ioctx = cluster.open_ioctx(POOL_NAME)
 
 print "=================="
 print "WRITING DATA"
 print "=================="
-ioctx = cluster.open_ioctx(POOL_NAME)
-
 with open('/home/ceph-admin/CORDS/systems/ceph/testfile_8ka','r') as f:
         testfile_8ka = f.read()
+        testfile_8ka = testfile_8ka.rstrip('\n')
         ioctx.write_full("testfile_8ka", testfile_8ka)
+
+ioctx = cluster.open_ioctx(POOL_NAME)
+read_data = ioctx.read("testfile_8ka")
+
+if read_data == testfile_8ka:
+	print('Correct')
+else:
+	print('Corrupt!')
 
 ioctx.close()
 print "=================="

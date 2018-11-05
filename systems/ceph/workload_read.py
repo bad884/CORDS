@@ -42,15 +42,18 @@ except Exception as e:
         raise e
 
 ioctx = cluster.open_ioctx(POOL_NAME)
-read_data = ioctx.read("hw")
-print(read_data)
 
-if read_data == "Hello World!":
-	status = 'Correct'
+with open('/home/ceph-admin/CORDS/systems/ceph/testfile_8ka','r') as f:
+        testfile_8ka = f.read()
+        testfile_8ka = testfile_8ka.rstrip('\n')
+
+read_data = ioctx.read("testfile_8ka")
+# print(read_data)
+
+if read_data == testfile_8ka:
+	print('Correct')
 else:
-	status = 'Corrupt'
-
-print status
+	print('Corrupt!')
 
 ioctx.close()
 
