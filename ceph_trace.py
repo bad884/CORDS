@@ -70,7 +70,7 @@ for i in range(0, machine_count):
 #	subprocess.check_output("mkdir " + data_dir_mount_points[i], shell = True)
 
 os.system("sudo ./scripts/snapshotting/snapshot.sh")
-os.system("sudo ./scripts/snapshooting/copy_data.sh")
+os.system("sudo ./scripts/snapshotting/copy_data.sh")
 # Remove old trace files and create new ones
 for i in range(0, machine_count):
 	subprocess.check_output("rm -rf " + trace_files[i], shell = True)
@@ -90,6 +90,8 @@ workload_command +=  " trace "
 for i in range(0, machine_count):
 	workload_command += data_dir_mount_points[i] + " "
 os.system(workload_command)
+
+os.system('sleep 1')
 
 for mp in data_dir_mount_points:
 	os.system('fusermount -u ' + mp + '; sleep 1')

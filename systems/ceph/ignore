@@ -1,0 +1,16 @@
+/var/lib/ceph/osd/ceph-0/fiemap_test
+/var/lib/ceph/osd/ceph-1/fiemap_test
+/var/lib/ceph/osd/ceph-2/fiemap_test
+/var/lib/ceph/osd/ceph-0/current/omap/000049.log
+/var/lib/ceph/osd/ceph-1/current/omap/000049.log
+/var/lib/ceph/osd/ceph-2/current/omap/000049.log
+/var/lib/ceph/osd/ceph-0/current/omap/000055.log 
+/var/lib/ceph/osd/ceph-0/current/omap/000054.log
+/var/lib/ceph/osd/ceph-0/current/omap/000053.log 
+/var/lib/ceph/osd/ceph-0/current/omap/000052.log
+/var/lib/ceph/osd/ceph-0/current/omap/000061.log
+/var/lib/ceph/osd/ceph-0/current/omap/000060.log
+/var/lib/ceph/osd/ceph-0/current/omap/000059.log
+/var/lib/ceph/osd/ceph-0/current/omap/000058.log
+/var/lib/ceph/osd/ceph-0/current/omap/000057.log
+/var/lib/ceph/osd/ceph-0/current/omap/000056.log
