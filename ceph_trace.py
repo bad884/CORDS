@@ -84,6 +84,8 @@ for i in range(0, machine_count):
 
 os.system('sleep 1')
 
+os.system("sudo ./scripts/setup/ceph_conf.sh")
+
 workload_command +=  " trace "
 for i in range(0, machine_count):
 	workload_command += data_dir_mount_points[i] + " "
