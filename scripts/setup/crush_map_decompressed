@@ -27,19 +27,19 @@ type 10 root
 # buckets
 host ceph {
 	id -2		# do not change unnecessarily
-	# weight 0.015
+	# weight 0.029
 	alg straw
 	hash 0	# rjenkins1
-	item osd.0 weight 0.005
-	item osd.1 weight 0.005
-	item osd.2 weight 0.005
+	item osd.0 weight 0.010
+	item osd.1 weight 0.010
+	item osd.2 weight 0.010
 }
 root default {
 	id -1		# do not change unnecessarily
-	# weight 0.015
+	# weight 0.029
 	alg straw
 	hash 0	# rjenkins1
-	item ceph weight 0.015
+	item ceph weight 0.029
 }
 
 # rules
