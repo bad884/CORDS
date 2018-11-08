@@ -15,6 +15,7 @@ cd my-cluster
 ceph-deploy new ceph
 ceph-deploy install ceph
 ceph-deploy mon create-initial
-cp ../ceph.backup ceph.conf
+cp ./ceph.conf ceph.conf.backup
+printf '[osd]\nosd journal size = 128\n\n' >> ceph.conf
 ceph-deploy --overwrite-conf admin ceph
 ceph-deploy osd create ceph:sdb ceph:sdc ceph:sdd
