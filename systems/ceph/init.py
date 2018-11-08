@@ -46,7 +46,7 @@ if cluster.pool_exists(POOL_NAME):
 print "=================="
 print "CREATING POOL " + POOL_NAME
 print "=================="
-cluster.create_pool(POOL_NAME)
+os.system("sudo ceph osd pool create " + POOL_NAME + " 100")
 ioctx = cluster.open_ioctx(POOL_NAME)
 
 print "=================="

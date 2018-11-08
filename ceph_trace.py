@@ -27,6 +27,7 @@ from collections import defaultdict
 import subprocess
 import argparse
 
+
 ERRFS_HOME = os.path.dirname(os.path.realpath(__file__))
 fuse_command_trace = ERRFS_HOME + "/errfs -f -ononempty,modules=subdir,allow_other,subdir=%s %s trace %s &"
 
@@ -65,13 +66,10 @@ data_dir_mount_points = []
 for i in range(0, machine_count):
 	data_dir_snapshots.append(os.path.join(uppath(data_dirs[i], 1), os.path.basename(os.path.normpath(data_dirs[i]))+ ".snapshot"))
 	data_dir_mount_points.append(os.path.join(uppath(data_dirs[i], 1), os.path.basename(os.path.normpath(data_dirs[i]))+ ".mp"))
-	subprocess.check_output("rm -rf " + data_dir_snapshots[i], shell = True)
-	subprocess.check_output("rm -rf " + data_dir_mount_points[i], shell = True)
-#	subprocess.check_output("mkdir " + data_dir_mount_points[i], shell = True)
 
-os.system("sudo ./scripts/snapshotting/copy_journals.sh")
-os.system("sudo ./scripts/snapshotting/snapshot.sh")
+os.system("sudo ./scripts/snapshotting/make_local_snapshots.sh")
 os.system("sudo ./scripts/snapshotting/copy_data.sh")
+
 # Remove old trace files and create new ones
 for i in range(0, machine_count):
 	subprocess.check_output("rm -rf " + trace_files[i], shell = True)

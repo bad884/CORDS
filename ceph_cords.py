@@ -29,10 +29,17 @@ import argparse
 import time
 from threading import Timer
 
+def remove(value, deletechars):
+    for c in deletechars:
+        value = value.replace(c,'')
+    return value;
+
+
 BLOCKSIZE = 4096
+STOP_CMD = "sudo systemctl stop ceph-osd.target"
 
 ERRFS_HOME = os.path.dirname(os.path.realpath(__file__))
-fuse_command_err = ERRFS_HOME + "/errfs -f -omodules=subdir,subdir=%s %s err %s %s %s &"
+fuse_command_err = ERRFS_HOME + "/errfs -f -ononempty,allow_other,modules=subdir,subdir=%s %s err %s %s %s &"
 fuse_unmount_command = "fusermount -u %s > /dev/null"
 uppath = lambda _path, n: os.sep.join(_path.split(os.sep)[:-n])
 
@@ -50,7 +57,7 @@ def kill_proc(proc, timeout):
 	proc.kill()
 
 def invoke_cmd(cmd):
-	p = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+	p = subprocess.Popen("timeout 60 " +  cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 	out, err = p.communicate()
 	return (out, err)
 
@@ -163,8 +170,10 @@ def cords_check():
 		for (op, block) in block_ops:
 			possible_err_modes = get_error_modes(op)
 			for err_type in possible_err_modes:
+				
+				os.system(STOP_CMD)
 				dir_index = str(corrupt_filename).rfind(data_dirs[corrupt_machine]) + len(data_dirs[corrupt_machine]) + 1
-				log_dir =  'result_' + (str(corrupt_machine) + '_' + str(corrupt_filename[dir_index :]) + '_' + str(block) + '_' + str(op) + '_' + str(err_type)).replace('/', '_')
+				log_dir =  remove('result_' + (str(corrupt_machine) + '_' + str(corrupt_filename[dir_index :]) + '_' + str(block) + '_' + str(op) + '_' + str(err_type)).replace('/', '_'),'\/:*?"<>|')
 				log_dir_path =  os.path.join(cords_results_base_dir, log_dir)
 
 				print str(op) + ' ' + str(corrupt_machine) + ':' + str(corrupt_filename) + ':' + str(block) + ':' + str(err_type)
@@ -172,10 +181,9 @@ def cords_check():
 					# subprocess.check_output("rm -rf " + data_dirs[mach], shell = True)
 					# subprocess.check_output("cp -R " + data_dir_snapshots[mach] + ' ' + data_dirs[mach], shell = True)
 
-				os.system("sudo /home/ceph-admin/CORDS/scripts/snapshotting/revert.sh")
-
-				subprocess.check_output("rm -rf " + data_dir_mount_points[corrupt_machine], shell = True)
-				subprocess.check_output("mkdir " + data_dir_mount_points[corrupt_machine], shell = True)
+				os.system('sleep 1')
+				os.system("sudo /home/ceph-admin/CORDS/scripts/snapshotting/snap_local_revert.sh")
+				os.system("sudo /home/ceph-admin/CORDS/scripts/snapshotting/copy_data.sh")
 
 				fuse_start_command = fuse_command_err%(data_dirs[corrupt_machine], data_dir_mount_points[corrupt_machine], corrupt_filename, block, err_type)
 				os.system(fuse_start_command)
@@ -192,8 +200,8 @@ def cords_check():
 
 				workload_command_curr += log_dir_path + " "
 
-				os.system("rm -rf " + log_dir_path)
-				os.system("mkdir -p " + log_dir_path)
+				os.system("sudo rm -rf " + log_dir_path)
+				os.system("sudo mkdir -p " + log_dir_path)
 
 				os.system("rm -rf /tmp/shoulderr")
 				os.system("touch /tmp/shoulderr; echo \'fals\' >> /tmp/shoulderr")
@@ -201,9 +209,15 @@ def cords_check():
 				(out, err) = invoke_cmd(workload_command_curr)
 				outfile = os.path.join(log_dir_path, 'workload.out')
 				os.system("rm -rf " + outfile)
+
+
+								
 				os.system("touch " + outfile)
 				with open(outfile, 'a') as f:
 					f.write(out + '\n' + err + '\n')
+
+				os.system(STOP_CMD)
+				os.system('sleep 3')
 
 				fuse_unmount = fuse_unmount_command%(data_dir_mount_points[corrupt_machine])
 				os.system(fuse_unmount)
@@ -233,5 +247,5 @@ print 'Testing took ' + str((end_test - start_test)) + ' seconds...'
 
 # Revert back to old conf
 print("/nRevert back to old state")
-os.system("sudo /home/ceph-admin/CORDS/scripts/snapshotting/revert.sh")
+os.system("sudo /home/ceph-admin/CORDS/scripts/snapshotting/local_revert.sh")
 os.system("sudo cp /home/ceph-admin/CORDS/scripts/setup/ceph.backup /etc/ceph/ceph.conf")

@@ -1,8 +1,11 @@
 [global]
-fsid = 1ee4f70c-7d62-414a-a07a-3a61a1b6932c
+fsid = 180a0611-7d22-4535-a3e7-a29193cbaac8
 mon_initial_members = ceph
-mon_host = 10.128.0.3
+mon_host = 10.128.0.2
 auth_cluster_required = cephx
 auth_service_required = cephx
 auth_client_required = cephx
+
+[osd]
+osd_journal_size = 128
 

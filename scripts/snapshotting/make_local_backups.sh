@@ -1,5 +1,7 @@
 #!/bin/bash
 
+sudo systemctl stop ceph-osd.target
+
 mkdir /home/ceph-admin/backups
 
 # make journal backups
@@ -12,9 +14,9 @@ sudo rm -rf /home/ceph-admin/backups/ceph-1.backup
 sudo rm -rf /home/ceph-admin/backups/ceph-2.backup
 
 # make data backups
-sudo cp -r /var/lib/ceph/osd/ceph-0 /home/ceph-admin/backups/ceph-0.backup
-sudo cp -r /var/lib/ceph/osd/ceph-1 /home/ceph-admin/backups/ceph-1.backup
-sudo cp -r /var/lib/ceph/osd/ceph-2 /home/ceph-admin/backups/ceph-2.backup
+sudo cp -a /var/lib/ceph/osd/ceph-0 /home/ceph-admin/backups/ceph-0.backup
+sudo cp -a /var/lib/ceph/osd/ceph-1 /home/ceph-admin/backups/ceph-1.backup
+sudo cp -a /var/lib/ceph/osd/ceph-2 /home/ceph-admin/backups/ceph-2.backup
 
 sudo chown -R ceph:ceph /home/ceph-admin/backups/ceph-0.backup
 sudo chown -R ceph:ceph /home/ceph-admin/backups/ceph-1.backup

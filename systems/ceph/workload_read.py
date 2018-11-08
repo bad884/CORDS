@@ -16,8 +16,6 @@ if sys.argv[1] == 'trace':
 	# format of sys.argv is sample_read.py trace workload_dir
 elif sys.argv[1] == 'cords':
 	print 'we are in cords mode now, injecting faults'
-	assert(len(sys.argv) == 4)
-	# format of sys.argv is sample_read.py cords workload_dir result_dir
 
 # workload_dir = sys.argv[2]
 # file = open(workload_dir + '/foo', 'r')
