@@ -15,5 +15,6 @@ cd my-cluster
 ceph-deploy new ceph
 ceph-deploy install ceph
 ceph-deploy mon create-initial
-ceph-deploy admin ceph
+cp ../ceph.backup ceph.conf
+ceph-deploy --overwrite-conf admin ceph
 ceph-deploy osd create ceph:sdb ceph:sdc ceph:sdd
