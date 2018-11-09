@@ -50,12 +50,15 @@ with open('/home/ceph-admin/CORDS/systems/ceph/testfile_8ka','r') as f:
         testfile_8ka = testfile_8ka.rstrip('\n')
 
 read_data = ioctx.read("testfile_8ka")
-# print(read_data)
 
 if read_data == testfile_8ka:
 	print('Correct')
 else:
-	print('Corrupt!')
+	print('Corrupt data returned!!!')
+
+os.system("sleep 3")
+os.system("sudo ceph osd tree")
+os.system("sudo ceph -s")
 
 ioctx.close()
 
