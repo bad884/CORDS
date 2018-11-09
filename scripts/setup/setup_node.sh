@@ -14,12 +14,11 @@ wget https://github.com/libfuse/libfuse/releases/download/fuse-2.9.7/fuse-2.9.7.
 sudo apt-get install -y gcc-5 g++-5; sudo update-alternatives; sudo update-alternatives --remove-all gcc; sudo update-alternatives --remove-all g++; sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-5 20; sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-5 20; sudo update-alternatives --config gcc; sudo update-alternatives --config g++;
 
 cd ~/CORDS
-
 make
 
 cd ~
 
-cp CORDS/scripts/setup/fuse.conf /etc/fuse.conf
+cp /home/ceph-admin/CORDS/scripts/setup/fuse.conf /etc/fuse.conf
 
-mkdir trace
-chmod 777 -R trace/
+mkdir ~/trace
+chmod 777 -R ~/trace/
