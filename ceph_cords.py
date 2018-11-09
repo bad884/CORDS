@@ -170,7 +170,7 @@ def cords_check():
 		for (op, block) in block_ops:
 			possible_err_modes = get_error_modes(op)
 			for err_type in possible_err_modes:
-				
+
 				os.system(STOP_CMD)
 				dir_index = str(corrupt_filename).rfind(data_dirs[corrupt_machine]) + len(data_dirs[corrupt_machine]) + 1
 				log_dir =  remove('result_' + (str(corrupt_machine) + '_' + str(corrupt_filename[dir_index :]) + '_' + str(block) + '_' + str(op) + '_' + str(err_type)).replace('/', '_'),'\/:*?"<>|')
@@ -211,7 +211,7 @@ def cords_check():
 				os.system("rm -rf " + outfile)
 
 
-								
+
 				os.system("touch " + outfile)
 				with open(outfile, 'a') as f:
 					f.write(out + '\n' + err + '\n')

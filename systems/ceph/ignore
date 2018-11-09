@@ -1,3 +1,12 @@
 fiemap_test
+xattr_test
 log
+*.log
 ldb
+whoami
+keyring
+type
+magic
+fsid
+ceph_fsid
+store_version
