@@ -67,8 +67,8 @@ for i in range(0, machine_count):
 	data_dir_snapshots.append(os.path.join(uppath(data_dirs[i], 1), os.path.basename(os.path.normpath(data_dirs[i]))+ ".snapshot"))
 	data_dir_mount_points.append(os.path.join(uppath(data_dirs[i], 1), os.path.basename(os.path.normpath(data_dirs[i]))+ ".mp"))
 
-os.system("sudo ./scripts/snapshotting/make_local_snapshots.sh")
-os.system("sudo ./scripts/snapshotting/copy_data.sh")
+os.system("sudo /home/ceph-admin/CORDS/scripts/snapshotting/make_local_snapshots.sh")
+os.system("sudo /home/ceph-admin/CORDS/scripts/snapshotting/copy_data.sh")
 
 # Remove old trace files and create new ones
 for i in range(0, machine_count):
@@ -83,7 +83,7 @@ for i in range(0, machine_count):
 
 os.system('sleep 1')
 
-os.system("sudo ./scripts/setup/ceph_conf.sh")
+os.system("sudo /home/ceph-admin/CORDS/scripts/setup/ceph_conf.sh")
 
 workload_command +=  " trace "
 for i in range(0, machine_count):
