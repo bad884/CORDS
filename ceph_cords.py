@@ -20,6 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+import glob
 import os
 import sys
 import math
@@ -57,7 +58,7 @@ def kill_proc(proc, timeout):
 	proc.kill()
 
 def invoke_cmd(cmd):
-	p = subprocess.Popen("timeout 60 " +  cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+	p = subprocess.Popen("timeout 30 " +  cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 	out, err = p.communicate()
 	return (out, err)
 
@@ -176,7 +177,11 @@ def cords_check():
 				log_dir =  remove('result_' + (str(corrupt_machine) + '_' + str(corrupt_filename[dir_index :]) + '_' + str(block) + '_' + str(op) + '_' + str(err_type)).replace('/', '_'),'\/:*?"<>|')
 				log_dir_path =  os.path.join(cords_results_base_dir, log_dir)
 
+				print('\n================================================================================================')
+				count += 1
+				print 'Error state:' + str(count) + '/' + str(total)
 				print str(op) + ' ' + str(corrupt_machine) + ':' + str(corrupt_filename) + ':' + str(block) + ':' + str(err_type)
+				print('================================================================================================')
 				# for mach in machines:
 					# subprocess.check_output("rm -rf " + data_dirs[mach], shell = True)
 					# subprocess.check_output("cp -R " + data_dir_snapshots[mach] + ' ' + data_dirs[mach], shell = True)
@@ -184,6 +189,11 @@ def cords_check():
 				os.system('sleep 1')
 				os.system("sudo /home/ceph-admin/CORDS/scripts/snapshotting/snap_local_revert.sh")
 				os.system("sudo /home/ceph-admin/CORDS/scripts/snapshotting/copy_data.sh")
+
+				# truncate logs
+				ceph_log_dir = "/var/log/ceph/*"
+				for filename in glob.glob(ceph_log_dir):
+				    os.system("sudo truncate -s 0 " + ceph_log_dir + '/' + filename)
 
 				fuse_start_command = fuse_command_err%(data_dirs[corrupt_machine], data_dir_mount_points[corrupt_machine], corrupt_filename, block, err_type)
 				os.system(fuse_start_command)
@@ -210,8 +220,6 @@ def cords_check():
 				outfile = os.path.join(log_dir_path, 'workload.out')
 				os.system("rm -rf " + outfile)
 
-
-
 				os.system("touch " + outfile)
 				with open(outfile, 'a') as f:
 					f.write(out + '\n' + err + '\n')
@@ -226,6 +234,14 @@ def cords_check():
 
 				os.system('mv /tmp/shoulderr ' + log_dir_path)
 
+				# keep logs
+				os.system('mkdir ' + log_dir_path + '/logs')
+				ceph_log_dir = "/var/log/ceph/*"
+				for filename in glob.glob(ceph_log_dir):
+				    os.system("sudo cp " + ceph_log_dir + '/' + filename + ' ' + log_dir_path + '/' + filename)
+
+				os.system('cp /var/log/ceph/* ' + log_dir_path)
+
 				for mach in machines:
 					os.system('cp -R ' + data_dirs[mach] + ' ' + log_dir_path)
 
@@ -234,10 +250,6 @@ def cords_check():
 					print 'Invoking checker...'
 					os.system(checker_command_curr)
 
-				count += 1
-				print 'States completed:' + str(count) + '/' + str(total)
-				#if count == 1:
-				#	return
 
 start_test = time.time()
 cords_check()
