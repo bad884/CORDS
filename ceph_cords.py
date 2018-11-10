@@ -58,7 +58,7 @@ def kill_proc(proc, timeout):
 	proc.kill()
 
 def invoke_cmd(cmd):
-	p = subprocess.Popen("timeout 30 " +  cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+	p = subprocess.Popen("timeout 10 " +  cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 	out, err = p.communicate()
 	return (out, err)
 
