@@ -179,7 +179,7 @@ def cords_check():
 
 				print('\n================================================================================================')
 				count += 1
-				print 'Error state:' + str(count) + '/' + str(total)
+				print 'Error state: ' + str(count) + '/' + str(total)
 				print str(op) + ' ' + str(corrupt_machine) + ':' + str(corrupt_filename) + ':' + str(block) + ':' + str(err_type)
 				print('================================================================================================')
 				# for mach in machines:
@@ -193,7 +193,9 @@ def cords_check():
 				# truncate logs
 				ceph_log_dir = "/var/log/ceph/*"
 				for filename in glob.glob(ceph_log_dir):
-				    os.system("sudo truncate -s 0 " + ceph_log_dir + '/' + filename)
+				    # os.system("sudo truncate -s 0 " + filename)
+				    target = open(filename, 'w')
+				    target.truncate()
 
 				fuse_start_command = fuse_command_err%(data_dirs[corrupt_machine], data_dir_mount_points[corrupt_machine], corrupt_filename, block, err_type)
 				os.system(fuse_start_command)
@@ -234,13 +236,12 @@ def cords_check():
 
 				os.system('mv /tmp/shoulderr ' + log_dir_path)
 
-				# keep logs
-				os.system('mkdir ' + log_dir_path + '/logs')
+				# save logs from run
+				save_log_dir_path = log_dir_path + '/logs'
+				os.system('mkdir ' + save_log_dir_path)
 				ceph_log_dir = "/var/log/ceph/*"
 				for filename in glob.glob(ceph_log_dir):
-				    os.system("sudo cp " + ceph_log_dir + '/' + filename + ' ' + log_dir_path + '/' + filename)
-
-				os.system('cp /var/log/ceph/* ' + log_dir_path)
+				    os.system("sudo cp " + filename + ' ' + save_log_dir_path)
 
 				for mach in machines:
 					os.system('cp -R ' + data_dirs[mach] + ' ' + log_dir_path)
